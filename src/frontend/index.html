@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager — IA Générative Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 2rem;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .tasks-list {
+        margin-top: 2rem;
+      }
+
+      .task-card {
+        background: #f9f9f9;
+        border-left: 4px solid #667eea;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .task-card:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .task-card.status-done {
+        border-left-color: #51cf66;
+        opacity: 0.7;
+      }
+
+      .task-card.status-in_progress {
+        border-left-color: #ffd43b;
+      }
+
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 0.5rem;
+      }
+
+      .task-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      .task-description {
+        color: #666;
+        margin-bottom: 0.75rem;
+      }
+
+      .task-meta {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .task-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .task-status.todo {
+        background: #e7f5ff;
+        color: #1971c2;
+      }
+
+      .task-status.in_progress {
+        background: #fff9db;
+        color: #f08c00;
+      }
+
+      .task-status.done {
+        background: #d3f9d8;
+        color: #2b8a3e;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .btn-small {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        background: #e9ecef;
+        color: #495057;
+      }
+
+      .btn-small:hover {
+        background: #dee2e6;
+      }
+
+      .btn-delete {
+        background: #fa5252;
+        color: white;
+      }
+
+      .btn-delete:hover {
+        background: #e03131;
+        box-shadow: 0 4px 12px rgba(250, 82, 82, 0.4);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+      }
+
+      .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      .error {
+        background: #ffe3e3;
+        border-left: 4px solid #fa5252;
+        color: #c92a2a;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .success {
+        background: #d3f9d8;
+        border-left: 4px solid #51cf66;
+        color: #2b8a3e;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📋 Task Manager</h1>
+      <p class="subtitle">Projet de démonstration — Cours IA Générative & QSI</p>
+
+      <div id="message"></div>
+
+      <form id="task-form">
+        <div class="form-group">
+          <label for="title">Titre *</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            minlength="3"
+            maxlength="200"
+            placeholder="Ex: Finir le rapport de QSI"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            maxlength="1000"
+            placeholder="Détails optionnels de la tâche..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Statut</label>
+          <select id="status" name="status">
+            <option value="todo">À faire</option>
+            <option value="in_progress">En cours</option>
+            <option value="done">Terminé</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn">Ajouter la tâche</button>
+      </form>
+
+      <div class="tasks-list">
+        <h2 style="margin-bottom: 1rem; color: #333">Mes tâches</h2>
+        <div id="tasks-container">
+          <div class="empty-state">
+            <div class="empty-state-icon">📝</div>
+            <p>Aucune tâche pour le moment</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem">
+              Créez votre première tâche ci-dessus !
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
