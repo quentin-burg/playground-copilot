@@ -2,12 +2,7 @@
 name: "testing-expert"
 description: "Expert en tests unitaires TypeScript. Utiliser pour écrire des tests complets avec Vitest, générer des fixtures typées, et identifier les cas limites (edge cases)."
 argument-hint: "Fichier, fonction ou module à tester"
-tools:
-  - read_file
-  - grep_search
-  - replace_string_in_file
-  - create_file
-  - run_in_terminal
+tools: [execute/runInTerminal, read/readFile, edit/createFile, search]
 ---
 
 # Testing Expert Agent
